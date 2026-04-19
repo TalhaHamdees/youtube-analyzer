@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 5 — Thumbnails + vision prep
-- **State:** NOT STARTED (Step 4 DONE — commit `93f5391`, 89 tests passing).
-- **Next action:** Build `mcp_server/tools/thumbnails.py` with `get_thumbnail(video_id, size)`. Size map default/mqdefault/hqdefault/sddefault/maxresdefault; fall back to `hqdefault` when `maxres` 404s (common for older/unpopular videos). Cache to `data/cache/thumbnails/{video_id}_{size}.jpg`. Return local absolute path + width/height so Claude can read the file as an image via vision.
-- **Blockers:** still pending: `YOUTUBE_API_KEY` for live Step 3 smoke; `OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` for Step 4 live browser flow. Both isolated from later steps by mocked tests.
+- **Active step:** Step 6 — Skill: summarize-video
+- **State:** NOT STARTED (Step 5 DONE — commit `a27919a`, 99 tests passing; 8 MCP tools registered).
+- **Next action:** Write `skills/summarize-video/SKILL.md` — a Claude Code skill that takes a YouTube URL, extracts the video_id, calls `get_video_details` + `get_transcript`, and outputs a structured summary (TL;DR, hook quote, main claims with timestamps, key quotes, CTA).
+- **Blockers:** Step 3/4 live smokes still pending user credentials; does not block skill work since skills are markdown and the tool contracts they use are already frozen.
 
 ## Commit Convention
 ```

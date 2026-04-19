@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 5 — Thumbnails + vision prep
+- **Date:** 2026-04-19
+- **Commit:** `a27919a` — `Step 5: Thumbnail downloader with size-fallback chain and poison-proof cache`
+- **Changed:** `mcp_server/tools/thumbnails.py` (new), `mcp_server/server.py` (registers `get_thumbnail`), `tests/test_thumbnails.py` (10 tests).
+- **Verified:** 99/99 pytest green; ruff clean; 8 tools registered (`load_studio_csv`, `rank_videos`, `get_transcript`, `get_channel_videos`, `get_video_details`, `search_niche`, `get_my_analytics`, `get_thumbnail`); code-review should-fixes applied (content-type + dimension-decode gate before cache-commit so captcha HTML / truncated JPEGs don't poison the forever-cache; atomic tmp+os.replace write).
+- **Notes:** Deferred the shared `httpx.Client` optimization until Step 9 (`clone-competitor`) proves it's a real bottleneck — with vision-cached descriptions the TLS-handshake overhead should be tiny. Hardcoded `.jpg` extension is an acceptable assumption today (YouTube serves JPEG at all five thumbnail suffixes); documented in module docstring.
+
 ## Step 4 — OAuth path + YouTube Analytics v2
 - **Date:** 2026-04-19
 - **Commit:** `93f5391` — `Step 4: OAuth flow + get_my_analytics for own-channel YouTube Analytics v2`
