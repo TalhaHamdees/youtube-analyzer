@@ -11,7 +11,7 @@ You are closing out an iteration of the YouTube Analyzer build loop. Implementat
 2. Run the step's verification commands from `IMPLEMENTATION_PLAN.md`. If **any** check fails, STOP — report the failure, do not commit.
 3. `git status` + `git diff --stat` — confirm the changed files match the step's declared deliverables. Flag anything unexpected (stray files, caches, secrets).
 4. Stage only the files belonging to this step. Name them explicitly — **never** `git add -A` or `git add .`.
-5. Commit using a HEREDOC with this exact shape:
+5. Commit using a HEREDOC with this exact shape (NO `Co-Authored-By` trailer — commits credit the user only):
    ```
    git commit -m "$(cat <<'EOF'
    Step N: <short title>
@@ -19,8 +19,6 @@ You are closing out an iteration of the YouTube Analyzer build loop. Implementat
    - <bullet 1>
    - <bullet 2>
    - <bullet 3 if needed>
-
-   Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
    EOF
    )"
    ```

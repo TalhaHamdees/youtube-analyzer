@@ -44,6 +44,5 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 Step N: <short title>
 
 <1-3 bullets of what changed and why>
-
-Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 ```
+**No** `Co-Authored-By: Claude ...` trailer — commits are attributed solely to the user.
