@@ -1,0 +1,48 @@
+# --- Secrets ---
+.env
+config/.env
+*.secret
+client_secrets.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Build artifacts ---
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+
+# --- Virtual envs ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Test / lint cache ---
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Editors ---
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# --- Project data (cached + generated, never commit) ---
+data/csv_exports/*
+!data/csv_exports/.gitkeep
+data/cache/*/*
+!data/cache/*/.gitkeep
+data/reports/*
+!data/reports/.gitkeep
