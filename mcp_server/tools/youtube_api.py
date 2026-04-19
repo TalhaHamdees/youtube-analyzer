@@ -17,20 +17,17 @@ Quota exhaustion and invalid keys surface as structured errors
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import os
 import re
-import time
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
 from googleapiclient.discovery import Resource, build
 from googleapiclient.errors import HttpError
 
-from mcp_server import paths
+from mcp_server import cache, errors, paths
 
 _log = logging.getLogger(__name__)
 
@@ -45,7 +42,6 @@ _CHANNEL_ID_RE = re.compile(r"^UC[A-Za-z0-9_-]{22}$")
 _VIDEO_ID_RE = re.compile(r"^[A-Za-z0-9_-]{11}$")
 # YouTube handles are 3–30 chars; must start and end with alphanumerics.
 _HANDLE_RE = re.compile(r"^@?[A-Za-z0-9][A-Za-z0-9._-]{1,28}[A-Za-z0-9]$")
-_SLUG_RE = re.compile(r"[^a-z0-9]+")
 _YT_HOST_RE = re.compile(r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/", re.IGNORECASE)
 
 _client: Resource | None = None
@@ -86,87 +82,15 @@ def _get_client() -> Resource | dict[str, Any]:
 
 
 # --------------------------------------------------------------------------- #
-# Cache helpers
+# googleapiclient helpers
 # --------------------------------------------------------------------------- #
-
-def _cache_file(namespace: str, key: str) -> Path:
-    return paths.API_CACHE / namespace / f"{key}.json"
-
-
-def _slug(value: str) -> str:
-    return _SLUG_RE.sub("_", value.strip().lower()).strip("_") or "empty"
-
-
-def _cache_read(namespace: str, key: str, ttl: int) -> Any | None:
-    path = _cache_file(namespace, key)
-    if not path.exists():
-        return None
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return None
-    age = time.time() - payload.get("_cached_at_epoch", 0)
-    if age > ttl:
-        return None
-    return payload.get("data")
-
-
-def _cache_write(namespace: str, key: str, data: Any) -> None:
-    target = _cache_file(namespace, key)
-    paths.ensure(target.parent)
-    payload = {
-        "_cached_at": datetime.now(UTC).isoformat(),
-        "_cached_at_epoch": time.time(),
-        "data": data,
-    }
-    try:
-        # Atomic write: tmp + os.replace avoids readers seeing half-written JSON
-        # if two calls race.
-        tmp = target.with_suffix(target.suffix + f".tmp{os.getpid()}")
-        tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-        os.replace(tmp, target)
-    except OSError as exc:
-        _log.warning("api cache write failed for %s/%s: %s", namespace, key, exc)
-
-
-# --------------------------------------------------------------------------- #
-# Error translation
-# --------------------------------------------------------------------------- #
-
-def _translate_http_error(exc: HttpError) -> dict[str, Any]:
-    """Map googleapiclient HttpError to our structured error taxonomy."""
-    status = exc.resp.status
-    reason = ""
-    try:
-        content = json.loads(exc.content.decode("utf-8"))
-        errors = content.get("error", {}).get("errors") or []
-        if errors:
-            reason = errors[0].get("reason", "")
-        message = content.get("error", {}).get("message", str(exc))
-    except (ValueError, AttributeError, UnicodeDecodeError):
-        message = str(exc)
-
-    if status == 403 and reason == "quotaExceeded":
-        return {"error": "quota_exceeded", "detail": message}
-    if status == 429 or reason in ("rateLimitExceeded", "userRateLimitExceeded"):
-        return {"error": "rate_limited", "detail": message}
-    if status == 403 and reason == "keyInvalid":
-        return {"error": "invalid_api_key", "detail": message}
-    if status == 403 and reason == "forbidden":
-        return {"error": "forbidden", "detail": message}
-    if status == 400:
-        return {"error": "bad_request", "detail": message}
-    if status == 404:
-        return {"error": "not_found", "detail": message}
-    return {"error": "api_error", "status": status, "detail": message}
-
 
 def _execute(request: Any) -> Any | dict[str, Any]:
     """Execute a googleapiclient request, translating errors to structured dicts."""
     try:
         return request.execute()
     except HttpError as exc:
-        return _translate_http_error(exc)
+        return errors.translate_http_error(exc)
 
 
 # --------------------------------------------------------------------------- #
@@ -243,7 +167,7 @@ def resolve_channel_id(channel: str) -> dict[str, Any]:
         }
 
     cache_key = _handle_cache_key(kind, cleaned)
-    cached = _cache_read("handles", cache_key, _TTL_HANDLE)
+    cached = cache.read("handles", cache_key, _TTL_HANDLE)
     if cached:
         return cached
 
@@ -262,7 +186,7 @@ def resolve_channel_id(channel: str) -> dict[str, Any]:
                 "title": items[0]["snippet"]["title"],
                 "resolved_via": "forHandle",
             }
-            _cache_write("handles", cache_key, result)
+            cache.write("handles", cache_key, result)
             return result
 
     # Fallback: search for the name and take the top channel result. Flag low
@@ -283,7 +207,7 @@ def resolve_channel_id(channel: str) -> dict[str, Any]:
         "title": title,
         "resolved_via": "search" if confident else "search_low_confidence",
     }
-    _cache_write("handles", cache_key, result)
+    cache.write("handles", cache_key, result)
     return result
 
 
@@ -301,7 +225,7 @@ def _hydrate_videos(
         if refresh:
             missing.append(vid)
             continue
-        cached = _cache_read("videos", vid, _TTL_VIDEO)
+        cached = cache.read("videos", vid, _TTL_VIDEO)
         if cached is not None:
             hydrated.append(cached)
         else:
@@ -319,7 +243,7 @@ def _hydrate_videos(
             return resp
         for item in resp.get("items", []):
             record = _slim_video(item)
-            _cache_write("videos", record["video_id"], record)
+            cache.write("videos", record["video_id"], record)
             hydrated.append(record)
 
     # Preserve input order.
@@ -373,7 +297,7 @@ def get_channel_videos(
     channel_id = resolved["channel_id"]
 
     cache_key = f"{channel_id}__limit_{limit}"
-    cached = _cache_read("channel_videos", cache_key, _TTL_CHANNEL) if not refresh else None
+    cached = cache.read("channel_videos", cache_key, _TTL_CHANNEL) if not refresh else None
     if cached is not None:
         return cached
 
@@ -421,7 +345,7 @@ def get_channel_videos(
         "count": len(videos),
         "videos": videos,
     }
-    _cache_write("channel_videos", cache_key, result)
+    cache.write("channel_videos", cache_key, result)
     return result
 
 
@@ -431,7 +355,7 @@ def get_video_details(video_id: str, refresh: bool = False) -> dict[str, Any]:
         return {"error": "invalid_video_id", "video_id": video_id}
 
     if not refresh:
-        cached = _cache_read("videos", video_id, _TTL_VIDEO)
+        cached = cache.read("videos", video_id, _TTL_VIDEO)
         if cached is not None:
             return cached
 
@@ -450,7 +374,7 @@ def get_video_details(video_id: str, refresh: bool = False) -> dict[str, Any]:
         return {"error": "video_not_found", "video_id": video_id}
 
     record = _slim_video(items[0])
-    _cache_write("videos", video_id, record)
+    cache.write("videos", video_id, record)
     return record
 
 
@@ -481,13 +405,13 @@ def search_niche(
     ).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     cache_key = "__".join([
-        _slug(query),
+        cache.slug(query),
         region.lower(),
         order,
         f"limit_{limit}",
         f"after_{published_after_days}d",
     ])
-    cached = _cache_read("search", cache_key, _TTL_SEARCH) if not refresh else None
+    cached = cache.read("search", cache_key, _TTL_SEARCH) if not refresh else None
     if cached is not None:
         return cached
 
@@ -533,7 +457,7 @@ def search_niche(
         "count": len(videos),
         "videos": videos,
     }
-    _cache_write("search", cache_key, result)
+    cache.write("search", cache_key, result)
     return result
 
 
