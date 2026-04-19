@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 10 — MCP registration + README
+- **Date:** 2026-04-19
+- **Commit:** `39b6463` — `Step 10: MCP registration snippet + README walkthrough`
+- **Changed:** `config/mcp.json` (new), `README.md` (expanded from placeholder to full install + walkthrough).
+- **Verified:** 105/105 pytest green (unchanged — Step 10 is docs-only); `ruff` clean; `mcp.list_tools()` returns the expected 9 names; `skills/` directory contains all four SKILL.md files. README tables link directly to the error codes produced by each structured-error path.
+- **Notes:** **Build complete.** The project is end-to-end shippable without the user's API credentials — they are only required for live runs, and the README explains the minimum config (YOUTUBE_API_KEY for competitor research, OAuth for own-channel Analytics). Summary of shipped surface: FastMCP server with 9 tools (load_studio_csv, rank_videos, get_transcript, get_channel_videos, get_video_details, search_niche, get_my_analytics, get_thumbnail, save_report), shared cache.py + errors.py + paths.py + auth/oauth.py, four Claude Code skills (summarize-video, analyze-my-channel, find-viral-formula, clone-competitor).
+
 ## Step 9 — Skill: clone-competitor (flagship) + cross-skill fixes
 - **Date:** 2026-04-19
 - **Commit:** `44b1044` — `Step 9: clone-competitor flagship + review fixes across all four skills`

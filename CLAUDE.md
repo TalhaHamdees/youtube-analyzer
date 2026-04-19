@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 10 — MCP registration + README
-- **State:** NOT STARTED (Step 9 DONE — commit `44b1044`, all four skills shipped with review fixes applied).
-- **Next action:** Write `config/mcp.json` snippet users can paste into Claude settings, and expand `README.md` into a real install + first-SOP walkthrough (clone → `.env` → `claude mcp add` → `/clone-competitor @channel` → inspect report).
-- **Blockers:** Step 3/4 live smokes still pending user `YOUTUBE_API_KEY` / OAuth credentials — not blocking the README since the README documents *how* to configure them, and the mocked test suite (105 tests) demonstrates the system works end-to-end without them.
+- **Active step:** **BUILD COMPLETE.** All 11 steps (0–10) landed on `main`.
+- **State:** DONE — 105 mocked tests green, 9 MCP tools + 4 Claude Code skills shipped, full README walkthrough. Final commit: `39b6463`.
+- **Next action:** Live smoke once the user supplies `YOUTUBE_API_KEY` (Step 3) and optionally `OAUTH_CLIENT_ID`/`OAUTH_CLIENT_SECRET` (Step 4). Suggested quick validation: open Claude Code in the repo, run `/summarize-video https://www.youtube.com/watch?v=dQw4w9WgXcQ` (no API key needed — uses `youtube-transcript-api`).
+- **Blockers:** none remaining. Live verifications deferred until the user provides credentials — design is insulated from that by mocked tests.
 
 ## Commit Convention
 ```
