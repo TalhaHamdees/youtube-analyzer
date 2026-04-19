@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 4 — OAuth path (own-channel analytics)
-- **State:** NOT STARTED (Step 3 DONE — commit `5b1f531`, 68 tests passing). **Blocker risk:** Step 4 live verification needs `OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` from the user and a browser consent flow.
-- **Next action:** Build `mcp_server/auth/oauth.py` (InstalledAppFlow with local-port consent), token cache at `data/cache/oauth/token.json`, and a `get_my_analytics(start_date, end_date, metrics)` tool on the `youtubeAnalytics` service. Tests run fully mocked; live browser flow only if the user provides credentials.
-- **Blockers:** Step 3 live smoke check against real YouTube Data API still pending `YOUTUBE_API_KEY`. Step 4 browser flow pending OAuth credentials. Neither blocks later steps — mocked tests carry us through.
+- **Active step:** Step 5 — Thumbnails + vision prep
+- **State:** NOT STARTED (Step 4 DONE — commit `93f5391`, 89 tests passing).
+- **Next action:** Build `mcp_server/tools/thumbnails.py` with `get_thumbnail(video_id, size)`. Size map default/mqdefault/hqdefault/sddefault/maxresdefault; fall back to `hqdefault` when `maxres` 404s (common for older/unpopular videos). Cache to `data/cache/thumbnails/{video_id}_{size}.jpg`. Return local absolute path + width/height so Claude can read the file as an image via vision.
+- **Blockers:** still pending: `YOUTUBE_API_KEY` for live Step 3 smoke; `OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` for Step 4 live browser flow. Both isolated from later steps by mocked tests.
 
 ## Commit Convention
 ```

@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 4 — OAuth path + YouTube Analytics v2
+- **Date:** 2026-04-19
+- **Commit:** `93f5391` — `Step 4: OAuth flow + get_my_analytics for own-channel YouTube Analytics v2`
+- **Changed:** `mcp_server/auth/oauth.py` (new), `mcp_server/tools/my_analytics.py` (new), `mcp_server/cache.py` (new — extracted), `mcp_server/errors.py` (new — extracted), `mcp_server/tools/youtube_api.py` (refactored to use shared helpers), `mcp_server/server.py` (registers `get_my_analytics`), `tests/test_oauth.py` (11 tests), `tests/test_my_analytics.py` (10 tests). Removed `mcp_server/auth/.gitkeep`.
+- **Verified:** 89/89 pytest green; `ruff` clean; `mcp.list_tools()` returns 7 tools (+ `get_my_analytics`); code-review subagent must-fixes applied: scope-subset check before reusing cached token, force_reauth deletes token file before flow, RefreshError handled distinctly from transient refresh errors, per-call `build()` so rotated creds don't stick, sorted metrics in cache key, case-insensitive `MINE`/`me` alias.
+- **Notes:** Extracted `cache.py` + `errors.py` as proper shared modules rather than having downstream tools reach into `youtube_api._private` helpers. `insufficient_permissions` added to the error taxonomy for Analytics-specific 403s. chmod 0600 on the saved token (POSIX-only; Windows silently ignores). No live browser flow attempted — `OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` still absent. Deferred as non-critical: file-permission check test, `_TTL_MY_ANALYTICS` expiry test (trivially symmetric with other TTL tests already covered in Step 3).
+
 ## Step 3 — YouTube Data API (key path)
 - **Date:** 2026-04-19
 - **Commit:** `5b1f531` — `Step 3: YouTube Data API v3 wrapper (key path) with quota-aware cache`
