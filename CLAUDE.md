@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 7 — Skill: analyze-my-channel
-- **State:** NOT STARTED (Step 6 DONE — commit `30b1bc5`, 105 tests, 9 MCP tools incl. `save_report`).
-- **Next action:** Write `skills/analyze-my-channel/SKILL.md` — reads a Studio CSV via `load_studio_csv`, ranks by views/ctr/avd via `rank_videos`, finds intersection winners, optionally fetches `get_thumbnail` + `get_transcript` for the top 5, surfaces patterns, recommends 5 next video ideas, saves via `save_report`.
-- **Blockers:** Step 3/4 live smokes pending. Step 7's verification ideally wants a real Studio CSV in `data/csv_exports/` — will flag if missing and fall back to synthetic-fixture smoke.
+- **Active step:** Step 8 — Skill: find-viral-formula
+- **State:** NOT STARTED (Step 7 DONE — commit `0059d96`).
+- **Next action:** Write `skills/find-viral-formula/SKILL.md` — given a niche keyword, run `search_niche` (expensive: 100 quota/call, hence 24 h cache), filter to 90-day high-view videos, hydrate details + thumbnails for the top cohort, transcript-read the top 5, cluster title + thumbnail patterns, name the 5 channels dominating the niche, save the report.
+- **Blockers:** none new. Step 3 live verification still pending `YOUTUBE_API_KEY`.
 
 ## Commit Convention
 ```

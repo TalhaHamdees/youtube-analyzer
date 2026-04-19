@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 7 — Skill: analyze-my-channel
+- **Date:** 2026-04-19
+- **Commit:** `0059d96` — `Step 7: analyze-my-channel skill`
+- **Changed:** `skills/analyze-my-channel/SKILL.md` (new).
+- **Verified:** skill markdown lints; all 9 required tools already registered on the MCP server (load_studio_csv, rank_videos, get_video_details, get_thumbnail, get_transcript, save_report). No live run against a real CSV yet — user has not dropped one into `data/csv_exports/`; the skill falls back cleanly to CSV-only analysis when `YOUTUBE_API_KEY` is absent, which is documented in its Notes & caveats section.
+- **Notes:** The "intersection winner" rule (video must appear in ≥ 2 of {top-views, top-CTR, top-AVD}) is the key idea — ranking by views alone lets lucky-hook videos game the audit. Quality bar: every named pattern cites ≥ 2 winner video_ids; every recommendation has a concrete title string + effort tag + pattern citation. No "be engaging" fluff allowed.
+
 ## Step 6 — Skill: summarize-video + save_report
 - **Date:** 2026-04-19
 - **Commit:** `30b1bc5` — `Step 6: summarize-video skill + save_report tool`
