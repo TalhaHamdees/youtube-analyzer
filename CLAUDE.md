@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 9 — Skill: clone-competitor (flagship)
-- **State:** NOT STARTED (Step 8 DONE — commit `00f8c19`).
-- **Next action:** Write `skills/clone-competitor/SKILL.md` — reverse-engineer a specific YouTube channel into a reproducible SOP. Pulls top 20 via `get_channel_videos`, hydrates details + thumbnails, transcript-reads the top 10, clusters title + thumbnail rules, builds a timed script skeleton, saves `{channel}-SOP.md` via `save_report`. This is the flagship that ties all prior tools together.
-- **Blockers:** none new.
+- **Active step:** Step 10 — MCP registration + README
+- **State:** NOT STARTED (Step 9 DONE — commit `44b1044`, all four skills shipped with review fixes applied).
+- **Next action:** Write `config/mcp.json` snippet users can paste into Claude settings, and expand `README.md` into a real install + first-SOP walkthrough (clone → `.env` → `claude mcp add` → `/clone-competitor @channel` → inspect report).
+- **Blockers:** Step 3/4 live smokes still pending user `YOUTUBE_API_KEY` / OAuth credentials — not blocking the README since the README documents *how* to configure them, and the mocked test suite (105 tests) demonstrates the system works end-to-end without them.
 
 ## Commit Convention
 ```

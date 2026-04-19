@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 9 — Skill: clone-competitor (flagship) + cross-skill fixes
+- **Date:** 2026-04-19
+- **Commit:** `44b1044` — `Step 9: clone-competitor flagship + review fixes across all four skills`
+- **Changed:** `skills/clone-competitor/SKILL.md` (new), plus review-driven edits to all three prior skills: `summarize-video`, `analyze-my-channel`, `find-viral-formula`.
+- **Verified:** 105/105 pytest still green (skills don't add code, only markdown); a cross-skill review agent produced 5 must-fixes + 6 should-fixes — all must-fixes applied, most should-fixes applied. Flagship produces fill-in-the-blank title templates, must-have/must-avoid thumbnail ruleset, 7-beat timed script skeleton, and 3 act-on-this-tomorrow ideas, all citing ≥3 video_ids per claim.
+- **Notes:** Key corrections from the review: hallucinated `video_not_found` error code removed (real code is `not_found`), `analyze-my-channel` now passes `source=csv_path` explicitly to avoid multi-CSV cache ambiguity, citation format unified to `[mm:ss] (video_id)` across all skills, clone-competitor's script-skeleton example expanded to a full 7-beat pattern (no `...` truncation), outlier exclusion tightened from soft-flag to hard-exclude from pattern counts. Quota estimate added to the flagship so users know a fresh run is ~5 units and re-runs hit cache.
+
 ## Step 8 — Skill: find-viral-formula
 - **Date:** 2026-04-19
 - **Commit:** `00f8c19` — `Step 8: find-viral-formula skill`
