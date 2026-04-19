@@ -10,7 +10,14 @@ from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP
 
-from mcp_server.tools import analytics, my_analytics, studio_csv, transcripts, youtube_api
+from mcp_server.tools import (
+    analytics,
+    my_analytics,
+    studio_csv,
+    thumbnails,
+    transcripts,
+    youtube_api,
+)
 
 mcp = FastMCP("youtube-analyzer")
 
@@ -19,6 +26,7 @@ analytics.register(mcp)
 transcripts.register(mcp)
 youtube_api.register(mcp)
 my_analytics.register(mcp)
+thumbnails.register(mcp)
 
 
 if __name__ == "__main__":
