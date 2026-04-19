@@ -34,9 +34,9 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 0 — Repo bootstrap
-- **State:** NOT STARTED
-- **Next action:** Scaffold files, `git init`, create GitHub repo via `gh repo create`, first commit + push.
+- **Active step:** Step 1 — MCP server skeleton + CSV tools
+- **State:** NOT STARTED (Step 0 DONE — commit `d92eb1d`, pushed to `origin/main`)
+- **Next action:** Build `mcp_server/server.py` (FastMCP), `tools/studio_csv.py`, `tools/analytics.py`; expose `load_studio_csv` + `rank_videos`; verify with `mcp dev`.
 - **Blockers:** none
 
 ## Commit Convention
