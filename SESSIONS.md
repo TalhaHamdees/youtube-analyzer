@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 8 — Skill: find-viral-formula
+- **Date:** 2026-04-19
+- **Commit:** `00f8c19` — `Step 8: find-viral-formula skill`
+- **Changed:** `skills/find-viral-formula/SKILL.md` (new).
+- **Verified:** skill markdown lints; all tools it depends on (`search_niche`, `get_video_details`, `get_thumbnail`, `get_transcript`, `save_report`) already registered. No live fetch run — `search_niche` would burn 100 quota units per invocation and user hasn't supplied a key.
+- **Notes:** Skill explicitly documents the quota cost and demands cache-first behavior — `refresh=True` opt-in only. Tail-filter (views ≥ max(100k, median)) is the key trick to keep the pattern analysis from being noise-dominated. Hook-DNA extraction runs on the top 5 only to bound transcript-API calls.
+
 ## Step 7 — Skill: analyze-my-channel
 - **Date:** 2026-04-19
 - **Commit:** `0059d96` — `Step 7: analyze-my-channel skill`

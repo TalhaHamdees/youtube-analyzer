@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 8 — Skill: find-viral-formula
-- **State:** NOT STARTED (Step 7 DONE — commit `0059d96`).
-- **Next action:** Write `skills/find-viral-formula/SKILL.md` — given a niche keyword, run `search_niche` (expensive: 100 quota/call, hence 24 h cache), filter to 90-day high-view videos, hydrate details + thumbnails for the top cohort, transcript-read the top 5, cluster title + thumbnail patterns, name the 5 channels dominating the niche, save the report.
-- **Blockers:** none new. Step 3 live verification still pending `YOUTUBE_API_KEY`.
+- **Active step:** Step 9 — Skill: clone-competitor (flagship)
+- **State:** NOT STARTED (Step 8 DONE — commit `00f8c19`).
+- **Next action:** Write `skills/clone-competitor/SKILL.md` — reverse-engineer a specific YouTube channel into a reproducible SOP. Pulls top 20 via `get_channel_videos`, hydrates details + thumbnails, transcript-reads the top 10, clusters title + thumbnail rules, builds a timed script skeleton, saves `{channel}-SOP.md` via `save_report`. This is the flagship that ties all prior tools together.
+- **Blockers:** none new.
 
 ## Commit Convention
 ```
