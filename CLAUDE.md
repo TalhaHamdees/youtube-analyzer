@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 2 — Transcript tool
-- **State:** NOT STARTED (Step 1 DONE — commit `9fe0027`, 23 tests passing)
-- **Next action:** Build `mcp_server/tools/transcripts.py` around `youtube-transcript-api`; cache to `data/cache/transcripts/{video_id}.{lang}.json`; graceful errors on TranscriptsDisabled / NoTranscriptFound.
-- **Blockers:** none
+- **Active step:** Step 3 — YouTube Data API (key path)
+- **State:** NOT STARTED (Step 2 DONE — commit `de189b2`, 39 tests passing). **Blocker risk:** this step requires `YOUTUBE_API_KEY` from the user to verify against live YouTube Data API v3.
+- **Next action:** Build `mcp_server/tools/youtube_api.py` with `get_channel_videos`, `get_video_details`, `search_niche`. Cache to `data/cache/api/`. Add quota-exceeded guard. Tests run fully mocked; live smoke check runs only if env key is set.
+- **Blockers:** live verification needs user-provided `YOUTUBE_API_KEY` in `config/.env` — implementation and mocked tests can proceed without it; mark step BLOCKED only if the key never arrives.
 
 ## Commit Convention
 ```

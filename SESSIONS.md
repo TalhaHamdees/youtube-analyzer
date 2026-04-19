@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 2 — Transcript tool
+- **Date:** 2026-04-19
+- **Commit:** `de189b2` — `Step 2: Transcript tool with disk cache + structured errors`
+- **Changed:** `mcp_server/paths.py` (new shared filesystem roots), `mcp_server/tools/transcripts.py`, `mcp_server/server.py` (registers the new tool), `tests/test_transcripts.py`.
+- **Verified:** 39/39 pytest green (16 new mocked transcript tests); `ruff check` clean; `mcp.list_tools()` returns `load_studio_csv`, `rank_videos`, `get_transcript`; code-review subagent findings applied (taxonomy for format-vs-upstream `invalid_video_id`, mirrored cache under used_lang after fallback, `logging.warning` on cache-write failure, signature-verified library exception instantiation, tests for every error path including `request_blocked`, `ip_blocked`, `video_unplayable`, generic `YouTubeTranscriptApiException`, per-lang cache keys, and the used-lang alias).
+- **Notes:** `youtube-transcript-api` 1.x+ deprecated the static `get_transcript` function; using the instance API `YouTubeTranscriptApi().fetch(video_id, languages=...)` → `FetchedTranscript` with `.snippets`/`.language_code`/`.is_generated`. `.fetch()` picks the first-matching language from the provided tuple, not a best fuzzy match — commented to prevent reviewer confusion. No real YouTube calls in CI; if the user wants a live sanity check, `get_transcript("dQw4w9WgXcQ")` in a REPL suffices.
+
 ## Step 1 — MCP server skeleton + CSV tools
 - **Date:** 2026-04-19
 - **Commit:** `9fe0027` — `Step 1: MCP server skeleton + Studio CSV tools`
