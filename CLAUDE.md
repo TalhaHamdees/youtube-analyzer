@@ -11,11 +11,11 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 - Branch: `main` — commit + push after **every** completed step.
 
 ## Working Agreement
-1. At session start: read this file + `SESSIONS.md`, confirm current step with the user, then continue.
-2. One step per session by default. If a step is big, split it — update `SESSIONS.md` accordingly.
-3. After finishing a step: run tests/verification for that step → commit with message `Step N: <title>` → `git push` → update the **Current Status** block below + append to `SESSIONS.md`.
-4. Never skip ahead. Never batch-commit multiple steps. If blocked, mark the step `BLOCKED` in Current Status and stop.
-5. Never use `--no-verify`, `--force`, or amend pushed commits.
+1. At session start: read this file + `SESSIONS.md`, then continue from Current Status.
+2. **Autonomous mode** (granted 2026-04-19): work Steps 1→10 straight through without pausing for per-step approval. Still research best practices before design decisions, still run verification + a code-review subagent over the diff before finalizing.
+3. After each step: run tests/verification → spawn a code-review subagent on the diff → commit with message `Step N: <title>` → `git push` → update the **Current Status** block below + append to `SESSIONS.md`. Never batch-commit multiple steps.
+4. Hard-stop only on real blockers: missing user-provided credentials, a test that requires a real artifact the user hasn't supplied, or failing verification. Mark the step `BLOCKED` in Current Status, explain what's needed, continue with later steps if independent.
+5. Never use `--no-verify`, `--force`, or amend pushed commits. Commits carry no `Co-Authored-By` trailer — all attribution to the user.
 
 ## Implementation Steps
 
