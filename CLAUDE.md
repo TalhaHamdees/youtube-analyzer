@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 3 — YouTube Data API (key path)
-- **State:** NOT STARTED (Step 2 DONE — commit `de189b2`, 39 tests passing). **Blocker risk:** this step requires `YOUTUBE_API_KEY` from the user to verify against live YouTube Data API v3.
-- **Next action:** Build `mcp_server/tools/youtube_api.py` with `get_channel_videos`, `get_video_details`, `search_niche`. Cache to `data/cache/api/`. Add quota-exceeded guard. Tests run fully mocked; live smoke check runs only if env key is set.
-- **Blockers:** live verification needs user-provided `YOUTUBE_API_KEY` in `config/.env` — implementation and mocked tests can proceed without it; mark step BLOCKED only if the key never arrives.
+- **Active step:** Step 4 — OAuth path (own-channel analytics)
+- **State:** NOT STARTED (Step 3 DONE — commit `5b1f531`, 68 tests passing). **Blocker risk:** Step 4 live verification needs `OAUTH_CLIENT_ID` / `OAUTH_CLIENT_SECRET` from the user and a browser consent flow.
+- **Next action:** Build `mcp_server/auth/oauth.py` (InstalledAppFlow with local-port consent), token cache at `data/cache/oauth/token.json`, and a `get_my_analytics(start_date, end_date, metrics)` tool on the `youtubeAnalytics` service. Tests run fully mocked; live browser flow only if the user provides credentials.
+- **Blockers:** Step 3 live smoke check against real YouTube Data API still pending `YOUTUBE_API_KEY`. Step 4 browser flow pending OAuth credentials. Neither blocks later steps — mocked tests carry us through.
 
 ## Commit Convention
 ```

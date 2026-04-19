@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 3 — YouTube Data API (key path)
+- **Date:** 2026-04-19
+- **Commit:** `5b1f531` — `Step 3: YouTube Data API v3 wrapper (key path) with quota-aware cache`
+- **Changed:** `mcp_server/tools/youtube_api.py` (new, ~370 LOC), `mcp_server/server.py` (registers 3 new tools), `tests/test_youtube_api.py` (29 mocked tests).
+- **Verified:** 68/68 pytest green; `ruff` clean; `mcp.list_tools()` returns 6 tools (`load_studio_csv`, `rank_videos`, `get_transcript`, `get_channel_videos`, `get_video_details`, `search_niche`); code-review subagent findings applied across 5 must-fix + 6 should-fix items (URL/no-scheme parsing, youtu.be shortlink rejection, collision-safe handle cache keys, sticky-handle semantics under `refresh=True`, pagination+dedupe, 429→rate_limited, low-confidence search fallback flag, atomic cache writes via tmp+os.replace, strftime-based publishedAfter, proper `test_resolve_caches_handle_lookup` assertions).
+- **Notes:** No live API call made — the user has not supplied `YOUTUBE_API_KEY`. Module loads `config/.env` lazily on first tool call, so tests and CI are unaffected. Deferred should-fixes: automatic retry on 5xx (failing fast is acceptable now), `Resource | dict` union-return refactor (works; too invasive to rewrite in this step), TTL monotonic-clock treatment (rare in practice). Search-quota cost is 100 units per call; 24 h cache means one run ≈ 1 day of quota. Deliberate: search_niche's `limit>50` IS supported via pagination but each page is another 100 units, so skills should default to `limit<=50`.
+
 ## Step 2 — Transcript tool
 - **Date:** 2026-04-19
 - **Commit:** `de189b2` — `Step 2: Transcript tool with disk cache + structured errors`
