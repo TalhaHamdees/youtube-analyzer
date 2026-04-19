@@ -13,6 +13,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp_server.tools import (
     analytics,
     my_analytics,
+    reports,
     studio_csv,
     thumbnails,
     transcripts,
@@ -27,6 +28,7 @@ transcripts.register(mcp)
 youtube_api.register(mcp)
 my_analytics.register(mcp)
 thumbnails.register(mcp)
+reports.register(mcp)
 
 
 if __name__ == "__main__":
