@@ -34,9 +34,9 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 1 — MCP server skeleton + CSV tools
-- **State:** NOT STARTED (Step 0 DONE — commit `d92eb1d`, pushed to `origin/main`)
-- **Next action:** Build `mcp_server/server.py` (FastMCP), `tools/studio_csv.py`, `tools/analytics.py`; expose `load_studio_csv` + `rank_videos`; verify with `mcp dev`.
+- **Active step:** Step 2 — Transcript tool
+- **State:** NOT STARTED (Step 1 DONE — commit `9fe0027`, 23 tests passing)
+- **Next action:** Build `mcp_server/tools/transcripts.py` around `youtube-transcript-api`; cache to `data/cache/transcripts/{video_id}.{lang}.json`; graceful errors on TranscriptsDisabled / NoTranscriptFound.
 - **Blockers:** none
 
 ## Commit Convention

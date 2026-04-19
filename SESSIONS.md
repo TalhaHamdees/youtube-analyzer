@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 1 — MCP server skeleton + CSV tools
+- **Date:** 2026-04-19
+- **Commit:** `9fe0027` — `Step 1: MCP server skeleton + Studio CSV tools`
+- **Changed:** `mcp_server/{__init__,server}.py`, `mcp_server/tools/{__init__,studio_csv,analytics}.py`, `tests/{__init__,conftest,test_studio_csv,test_analytics}.py`; removed obsolete `mcp_server/tools/.gitkeep`.
+- **Verified:** 23/23 pytest green; `ruff check` clean; `mcp.list_tools()` returns `load_studio_csv` + `rank_videos`; code-review subagent findings applied (scored fuzzy matcher, `pd.isna` null check, JSON-safe preview, Total-only empty-export test, narrowed exception catch).
+- **Notes:** Studio exports are UTF-16 LE + tab despite `.csv` extension — confirmed this ship via web research, parser sniffs BOM and delimiter so no per-user config needed. Real-export verification will land when the user drops a file into `data/csv_exports/`. Ruff ignored `ambiguous variable` style warnings because none tripped. Assumed US-style numbers (comma thousands, dot decimal); non-US locales would need a separate parser path — documented in `_coerce_numeric` docstring.
+
 ## Step 0 — Repo bootstrap
 - **Date:** 2026-04-19
 - **Commit:** `d92eb1d` — `Step 0: Repo bootstrap`
