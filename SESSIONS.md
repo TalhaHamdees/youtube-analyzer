@@ -14,6 +14,13 @@ Entry template:
 
 ---
 
+## Step 6 — Skill: summarize-video + save_report
+- **Date:** 2026-04-19
+- **Commit:** `30b1bc5` — `Step 6: summarize-video skill + save_report tool`
+- **Changed:** `skills/summarize-video/SKILL.md` (new), `mcp_server/tools/reports.py` (new), `mcp_server/server.py` (registers `save_report`), `tests/test_reports.py` (6 tests). Removed `skills/.gitkeep`.
+- **Verified:** 105/105 pytest green; ruff clean; 9 tools registered (+ `save_report`). Skill file lints as valid front-mattered markdown.
+- **Notes:** Bundled `save_report` here rather than its own step because Steps 7–9 all depend on it — it's cheap to implement (atomic write + slugging) and saves a later tool-registration shuffle. The summarize-video skill also handles the `transcripts_disabled` / `no_transcript` fallback explicitly: summary-from-metadata with a "Transcript unavailable" banner, so Claude doesn't invent content.
+
 ## Step 5 — Thumbnails + vision prep
 - **Date:** 2026-04-19
 - **Commit:** `a27919a` — `Step 5: Thumbnail downloader with size-fallback chain and poison-proof cache`

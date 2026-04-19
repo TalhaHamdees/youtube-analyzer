@@ -34,10 +34,10 @@ Python MCP server + Claude Code skills that analyze YouTube data to drive conten
 | 10 | **MCP registration + docs** | `config/mcp.json` snippet, README usage section | `claude mcp list` shows the server; README walks a new user from clone to first SOP |
 
 ## Current Status
-- **Active step:** Step 6 — Skill: summarize-video
-- **State:** NOT STARTED (Step 5 DONE — commit `a27919a`, 99 tests passing; 8 MCP tools registered).
-- **Next action:** Write `skills/summarize-video/SKILL.md` — a Claude Code skill that takes a YouTube URL, extracts the video_id, calls `get_video_details` + `get_transcript`, and outputs a structured summary (TL;DR, hook quote, main claims with timestamps, key quotes, CTA).
-- **Blockers:** Step 3/4 live smokes still pending user credentials; does not block skill work since skills are markdown and the tool contracts they use are already frozen.
+- **Active step:** Step 7 — Skill: analyze-my-channel
+- **State:** NOT STARTED (Step 6 DONE — commit `30b1bc5`, 105 tests, 9 MCP tools incl. `save_report`).
+- **Next action:** Write `skills/analyze-my-channel/SKILL.md` — reads a Studio CSV via `load_studio_csv`, ranks by views/ctr/avd via `rank_videos`, finds intersection winners, optionally fetches `get_thumbnail` + `get_transcript` for the top 5, surfaces patterns, recommends 5 next video ideas, saves via `save_report`.
+- **Blockers:** Step 3/4 live smokes pending. Step 7's verification ideally wants a real Studio CSV in `data/csv_exports/` — will flag if missing and fall back to synthetic-fixture smoke.
 
 ## Commit Convention
 ```
