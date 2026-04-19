@@ -26,14 +26,17 @@ description: Produce a structured digest of any YouTube video from its URL — T
 
 2. **Call `get_video_details(video_id)`.**
    - Use its `title`, `channel_title`, and `published_at` for the header line.
-   - If the call returns `{"error": "..."}`, report the error and stop. Common ones:
+   - If the call returns `{"error": "..."}`, report the error and stop. Realistic codes:
      - `invalid_video_id` → the regex let through something malformed.
-     - `video_not_found` → the video is private, deleted, or the id is wrong.
-     - `quota_exceeded` → the user's YouTube Data API quota is spent; tell them to retry tomorrow or set a second key.
+     - `not_found` (or `video_not_found`) → the video is private, deleted, or the id is wrong.
+     - `quota_exceeded` / `rate_limited` → YouTube Data API quota / rate window; advise retry tomorrow or a second key.
+     - `missing_api_key` → user has not configured `YOUTUBE_API_KEY`; tell them how to fix in `config/.env`.
+     - `forbidden` / `api_error` → surface the `detail` field verbatim.
 
 3. **Call `get_transcript(video_id)`.**
-   - On `{"error": "transcripts_disabled"}` or `{"error": "no_transcript", ...}`, produce the summary from `description` alone and label the output "**Transcript unavailable — summary from metadata**". Do **not** invent content.
-   - On any other error, report it and stop.
+   - On `{"error": "transcripts_disabled"}`, `{"error": "no_transcript", ...}`, or `{"error": "age_restricted"}`, produce the summary from `description` alone and label the output "**Transcript unavailable — summary from metadata**". Do **not** invent content.
+   - On `{"error": "request_blocked"}`, report the rate/IP block and stop.
+   - On any other error, report it verbatim and stop.
 
 4. **Produce the summary** directly from transcript segments so you can cite timestamps. Use `[mm:ss]` format — compute from `segment.t` (seconds).
 
@@ -50,14 +53,14 @@ description: Produce a structured digest of any YouTube video from its URL — T
 > "{verbatim first lines from the transcript}"
 
 ## Main claims
-- [mm:ss] {claim 1}
-- [mm:ss] {claim 2}
-- [mm:ss] {claim 3}
+- [mm:ss] (video_id) {claim 1}
+- [mm:ss] (video_id) {claim 2}
+- [mm:ss] (video_id) {claim 3}
 - (3–7 bullets; each must be a claim or step, not a topic)
 
 ## Best quotes
-- [mm:ss] "{verbatim 1-2 sentence line}"
-- [mm:ss] "{verbatim 1-2 sentence line}"
+- [mm:ss] (video_id) "{verbatim 1-2 sentence line}"
+- [mm:ss] (video_id) "{verbatim 1-2 sentence line}"
 
 ## CTA / next step
 {what the creator asks the viewer to do — subscribe, buy, click, visit, nothing}

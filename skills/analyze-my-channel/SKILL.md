@@ -23,12 +23,12 @@ description: Audit your YouTube channel from a Studio CSV export — rank videos
 
 ## Steps
 
-1. **Load the export.** Call `load_studio_csv(csv_path)`. If it returns `{"error": ...}`, report which error and stop (file not found, parse failed). On success, note the `rows` count and `columns` list — if a column you want isn't there, either the CSV is from a different Studio view or the locale is non-English; adapt.
+1. **Load the export.** Call `load_studio_csv(csv_path)`. If it returns `{"error": ...}`, report which error and stop (common: `file_not_found`, `parse_failed`, `empty_report` on save later, `write_failed` on save). On success, note the `rows` count and `columns` list — if a column you want isn't there, either the CSV is from a different Studio view or the locale is non-English; adapt.
 
-2. **Rank three ways.** Call `rank_videos` for each:
-   - `rank_videos("views", top_n=10)` → save as "top by views"
-   - `rank_videos("ctr", top_n=10)` → save as "top by CTR"
-   - `rank_videos("avd_seconds", top_n=10)` → save as "top by retention"
+2. **Rank three ways.** Pass `source=csv_path` explicitly so the ranker pulls from the exact CSV you just loaded rather than the "most recent" pointer (matters if the user has loaded multiple files in one session):
+   - `rank_videos("views", top_n=10, source=csv_path)` → save as "top by views"
+   - `rank_videos("ctr", top_n=10, source=csv_path)` → save as "top by CTR"
+   - `rank_videos("avd_seconds", top_n=10, source=csv_path)` → save as "top by retention"
 
 3. **Find the true winners.** Compute the set of videos appearing in ≥ 2 of the three lists. These are the channel's real hits — strong on discovery AND retention, not just one metric. Typical result: 2–5 videos.
 
@@ -50,7 +50,7 @@ description: Audit your YouTube channel from a Studio CSV export — rank videos
    - **Why it fits** — which pattern(s) it matches, citing the winners' video_ids.
    - **Estimated effort** — small / medium / large based on whether the video can be made from existing footage, needs new scripting, or needs new filming.
 
-8. **Surface underperformers to revisit.** From the bottom quartile by views *that also have solid CTR (≥ channel median CTR)*, list up to 5. These are "good hook, weak topic/retention" — candidates for a re-cut or a title/thumbnail refresh.
+8. **Surface underperformers to revisit.** From the bottom quartile by views *that also have solid CTR (≥ the median CTR across the **full loaded CSV**, not just the top 10)*, list up to 5. These are "good hook, weak topic/retention" — candidates for a re-cut or a title/thumbnail refresh.
 
 9. **Save.** Call `save_report(name="my-channel-audit", markdown="<full report below>")`. Return the path to the user.
 
@@ -63,8 +63,8 @@ _Source: {csv filename} · {row count} videos · generated {date}_
 ## Top 10 tables
 
 ### By views
-| # | Title | Views | CTR | AVD |
-| - | ----- | ----- | --- | --- |
+| # | Title | video_id | Views | CTR | AVD |
+| - | ----- | -------- | ----- | --- | --- |
 ...
 
 ### By CTR

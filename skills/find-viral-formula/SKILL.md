@@ -25,9 +25,9 @@ description: Research what's going viral in a niche right now — not one channe
 
 ## Steps
 
-1. **Fetch the cohort.** Call `search_niche(query=niche, region=region, order="viewCount", limit=limit, published_after_days=published_after_days)`. Expect `{"videos": [...], "count": N, ...}`. On any `error` result, report + stop. Cache-hit is fine (skip-and-reuse within 24 h).
+1. **Fetch the cohort.** Call `search_niche(query=niche, region=region, order="viewCount", limit=limit, published_after_days=published_after_days)`. Expect `{"videos": [...], "count": N, ...}`. Each video dict has fields `video_id`, `title`, `channel_id`, `channel_title`, `views` (int or null), `likes`, `comments`, `published_at`, `tags`, `duration`, `thumbnail_url`. On any `error` result, report + stop — common codes: `missing_api_key`, `quota_exceeded`, `rate_limited`, `invalid_api_key`. Cache-hit is fine (skip-and-reuse within 24 h).
 
-2. **Drop the tail.** Filter the cohort to videos with `views >= max(100_000, median(views_of_cohort))`. This removes videos that snuck onto the list via sparse competition and would distort the pattern analysis. If the filter leaves < 5 videos, lower the threshold to `max(10_000, median)` and note it in the caveats.
+2. **Drop the tail.** Filter the cohort to videos with `views` (the integer field above) `>= max(100_000, median(views))`. Videos where `views is None` are dropped. This removes entries that snuck onto the list via sparse competition and would distort the pattern analysis. If the filter leaves < 5 videos, lower the threshold to `max(10_000, median)` and note it in the caveats.
 
 3. **Cluster the titles.** For each surviving video, tag the title along these axes:
    - **Length bucket**: ≤30 / 31–45 / 46–60 / 60+ characters.
@@ -49,7 +49,7 @@ description: Research what's going viral in a niche right now — not one channe
 
 6. **Catch the hook DNA.** For each of the top 5 videos only, call `get_transcript(video_id)` and read segments where `t < 30`. Tag the first-30-seconds hook type (question / stat / bold claim / story / curiosity gap / demo). Report which hook type repeats.
 
-7. **Save.** Call `save_report(name="{slug(niche)}-formula", markdown=<body below>)`. Return the path.
+7. **Save.** Build the report filename slug: lowercase the niche, replace spaces and punctuation with hyphens, collapse consecutive hyphens, strip leading/trailing hyphens — e.g. `"Notion productivity!!"` → `"notion-productivity"`. Call `save_report(name="{slug}-formula", markdown=<body below>)`. Handle `save_report` errors: `empty_report` (your body is empty — regenerate) or `write_failed` (surface to user). Return the path.
 
 ## Output format
 
@@ -75,8 +75,8 @@ _Cohort: {filtered_count} of {raw_count} videos — median views {median} · top
 ## Hook formula (top-5 only)
 - **Dominant hook type:** {question / stat / bold claim / etc} — {count}/5 videos
 - Example hook lines:
-  - [0:00 video_id] "{verbatim opening line}"
-  - [0:00 video_id] "..."
+  - [00:00] (video_id) "{verbatim opening line}"
+  - [00:00] (video_id) "..."
 
 ## Dominators — who's winning this niche
 1. **{channel title}** — {n} videos in cohort · {total_views} total · e.g. {video_id}
