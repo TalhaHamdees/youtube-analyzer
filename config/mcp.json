@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "youtube-analyzer": {
+      "command": "python",
+      "args": ["-m", "mcp_server.server"],
+      "cwd": "${YOUTUBE_ANALYZER_DIR}",
+      "env": {
+        "YOUTUBE_API_KEY": "${YOUTUBE_API_KEY}",
+        "OAUTH_CLIENT_ID": "${OAUTH_CLIENT_ID}",
+        "OAUTH_CLIENT_SECRET": "${OAUTH_CLIENT_SECRET}"
+      }
+    }
+  }
+}
